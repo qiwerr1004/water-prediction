@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>수계별 주요 feature 예측결과</title>
+  <meta charset="UTF-8">
+</head>
+<body style="text-align: center;">
+<h2 style="text-align: center;">
+   수계:
+  {% if id == '0' %}
+    한강
+  {% elif id == '1' %}
+    금강
+  {% elif id == '2' %}
+    낙동강
+  {% elif id == '3' %}
+    영산강
+  {% endif %}
+, {{ day }} 일 예측 모델(
+  {% if md == 'c' %}
+    CNN
+  {% elif md == 'l' %}
+    LSTM
+  {% elif md == 'g' %}
+    GRU
+  {% elif md == 'r' %}
+    RNN
+  {% endif %}
+)  <a style = "text-decoration: none;color: #337ab7;font-weight: bold;", href="http://58.226.30.76:5000">[Home]</a></h2>
+<h3 style="text-align: center;"> 데이터셋 : {% if t_set == '0' %} 2022년 1월 ~ 2023년 2월 {% elif t_set == '1' %} 2023년 3월 {% endif %}
+</h3>
+<h3 style="text-align: center;"> 예측 feature: {{ col }} / loss: {{ loss }} / rmse: {{ rmse }} / nse: {{ nse }} 
+    [ result : {% if nse >= 0.8 %}<span style="color: green;"> Very Good </span>{% elif nse >= 0.7 %} <span style="color: blue;"> Good </span> 
+    {% elif nse >= 0.5 %} <span style="color: orange;"> Satisfactory </span>
+    {% else %} <span style="color: red;"> Not Satisfactory </span> {% endif %} ]
+</h3>  
+      
+<table style="width: 600px; border-collapse: collapse; font-family: Arial, sans-serif; color: #333333; margin: 0 auto;">
+  <thead>
+    <tr>
+      <th style="background-color: #f2f2f2; border: 1px solid black; padding: 1px; text-align: center;">일자</th>
+      <th style="background-color: #f2f2f2; border: 1px solid black; padding: 1px; text-align: center;">origin value</th>
+     {% if data.values[0]|length > 3 %}
+      <th style="background-color: #f2f2f2; border: 1px solid black; padding: 1px; text-align: center;">q_test value</th>
+     {% endif %}
+      <th style="background-color: #f2f2f2; border: 1px solid black; padding: 1px; text-align: center;">predict value</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+ {% if data.values[0]|length > 3 %}
+  {% for y, p, o, d in data.values %}
+    <tr>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ d }}</td>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ '%.2f'|format(y) }}</td>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ '%.2f'|format(o) }}</td>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ '%.2f'|format(p) }}</td>
+    </tr>
+  {% endfor %} 
+ {% else %}
+  {% for y, p, d in data.values %}
+    <tr>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ d }}</td>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ '%.2f'|format(y) }}</td>
+      <td style="border: 1px solid black; padding: 1px; text-align: center;">{{ '%.2f'|format(p) }}</td>
+    </tr>
+  {% endfor %}      
+{% endif %}
+  
+  </tbody>
+</table>   
+  <br>
+<!-- Display the image -->
+<img src="data:image/png;base64,{{ plot_data }}" alt="prediction graph" style="width: 800px; margin: 0 auto;" />
+  
+  <div id="output"></div>
+</body>
+</html>
